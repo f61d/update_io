@@ -102,9 +102,9 @@ def Copy2IO(direct):
     doc_file_name = os.path.join(docs_path, os.path.dirname(direct))
     doc_file_name = os.path.join(doc_file_name, direct.split("/")[-1])
     print doc_file_name + ".md"
-    #new_doc = open(doc_file_name + ".md", "w")
-    #new_doc.write(UpdateREADME(direct))
-    #new_doc.close()
+    new_doc = open(doc_file_name + ".md", "w")
+    new_doc.write(UpdateREADME(direct))
+    new_doc.close()
     UpdateMKDOCS(direct)
 
 def Usage():
