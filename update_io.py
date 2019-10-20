@@ -51,7 +51,7 @@ def yml_add_new_item(origin, pathes, direct):
                     return origin
             new_node = {}
             new_node[pathes[1]] = []
-            origin[pathes[0]].append(yml_add_new_item(new_node, pathes[1:]), direct)
+            origin[pathes[0]].append(yml_add_new_item(new_node, pathes[1:], direct))
             return origin
         else:
             return False
