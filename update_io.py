@@ -94,35 +94,35 @@ def UpdateMKDOCS(direct):
     mkdocs_file.write(mkdocs_content_new)
     mkdocs_file.close()
 
-index_module = '''- web
+index_module = '''### web
 
-  https://f61d.github.io/web/
+https://f61d.github.io/web/
   
-  > {web_recent}
+{web_recent}
 
-- pwn
+### pwn
 
-  https://f61d.github.io/pwn/
+https://f61d.github.io/pwn/
   
-  > {pwn_recent}
+{pwn_recent}
 
-- crypto
+### crypto
 
-  https://f61d.github.io/crypto/
+https://f61d.github.io/crypto/
   
-  > {crypto_recent}
+{crypto_recent}
 
-- reverse
+### reverse
 
-  https://f61d.github.io/reverse/
+https://f61d.github.io/reverse/
   
-  > {reverse_recent}
+{reverse_recent}
 
-- misc
+### misc
 
-  https://f61d.github.io/misc/
+https://f61d.github.io/misc/
   
-  > {misc_recent}
+{misc_recent}
 '''
 
 
@@ -160,15 +160,15 @@ def UpdateHomePage(direct):
                 return
             
     if direct.replace("\\", "/").split("/")[0] == "web":
-        web_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE}> \n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+        web_recent += "> ```{chall_name}``` by **```{AUTHOR}```** @ {DATE} \n\n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
     elif direct.replace("\\", "/").split("/")[0] == "pwn":
-        pwn_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE}> \n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+        pwn_recent += "> ```{chall_name}``` by **```{AUTHOR}```** @ {DATE} \n\n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
     elif direct.replace("\\", "/").split("/")[0] == "crypto":
-        crypto_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE} \n>".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+        crypto_recent += "> ```{chall_name}``` by **```{AUTHOR}```** @ {DATE} \n\n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
     elif direct.replace("\\", "/").split("/")[0] == "reverse":
-        reverse_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE} \n>".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+        reverse_recent += "> ```{chall_name}``` by **```{AUTHOR}```** @ {DATE} \n\n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
     elif direct.replace("\\", "/").split("/")[0] == "misc":
-        misc_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE}> \n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+        misc_recent += "> ```{chall_name}``` by **```{AUTHOR}```** @ {DATE} \n\n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
     #return to original work dir
     os.chdir(origin_cwd)
 
