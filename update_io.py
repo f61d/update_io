@@ -6,9 +6,16 @@ except ImportError:
 import os
 import sys
 import re
+import datetime
 
 chall_path = ""
 io_path = ""
+
+web_recent = ""
+pwn_recent = ""
+crypto_recent = ""
+reverse_recent = ""
+misc_recent = ""
 
 # direct: "pwn/VMEscape/BabyQemu"
 # rel: "![](./index_files/2d7a730f-7bb6-424f-ab64-9c1836826315.jpg)"
@@ -87,6 +94,84 @@ def UpdateMKDOCS(direct):
     mkdocs_file.write(mkdocs_content_new)
     mkdocs_file.close()
 
+index_module = '''- web
+
+  https://f61d.github.io/web/
+  
+  > {web_recent}
+
+- pwn
+
+  https://f61d.github.io/pwn/
+  
+  > {pwn_recent}
+
+- crypto
+
+  https://f61d.github.io/crypto/
+  
+  > {crypto_recent}
+
+- reverse
+
+  https://f61d.github.io/reverse/
+  
+  > {reverse_recent}
+
+- misc
+
+  https://f61d.github.io/misc/
+  
+  > {misc_recent}
+'''
+
+
+def UpdateHomePage(direct):
+    global chall_path, io_path
+    global web_recent
+    global pwn_recent
+    global crypto_recent
+    global reverse_recent
+    global misc_recent
+    origin_cwd = os.getcwd()
+    #goto chall_path work dir
+    os.chdir(chall_path)
+    README_PATH = os.path.join("./", direct)
+    result = os.popen('git log --date=short {readme_path}'.format(readme_path = README_PATH)) 
+    res = result.read()
+    result.close()
+    AUTHOR = ""
+    DATE = ""
+    for line in res.splitlines(): 
+        if "Author:".lower() in line.lower():
+            AUTHOR = line[line.find(":") + 1 : ].strip()
+            AUTHOR_mail_beg = AUTHOR.find("<")
+            AUTHOR_mail_end = AUTHOR.find(">")
+            AUTHOR = AUTHOR[ : AUTHOR_mail_beg] + AUTHOR[AUTHOR_mail_end + 1 : ]
+            AUTHOR = AUTHOR.strip()
+        if "Date:".lower() in line.lower():
+            DATE = line[line.find(":") + 1 : ].strip()
+            timeArray = DATE.split("-")
+            day_commit = datetime.datetime(int(timeArray[0]), int(timeArray[1]), int(timeArray[2]))
+            day_now = datetime.datetime.now()
+            day_dec = (day_now - day_commit).days
+            if day_dec > 60:
+                os.chdir(origin_cwd)
+                return
+            
+    if direct.replace("\\", "/").split("/")[0] == "web":
+        web_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE}> \n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+    elif direct.replace("\\", "/").split("/")[0] == "pwn":
+        pwn_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE}> \n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+    elif direct.replace("\\", "/").split("/")[0] == "crypto":
+        crypto_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE} \n>".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+    elif direct.replace("\\", "/").split("/")[0] == "reverse":
+        reverse_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE} \n>".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+    elif direct.replace("\\", "/").split("/")[0] == "misc":
+        misc_recent += "```{chall_name}``` by <**{AUTHOR}**> at <{DATE}> \n".format(chall_name = direct.replace("\\", "/").split("/")[-1], AUTHOR = AUTHOR, DATE = DATE)
+    #return to original work dir
+    os.chdir(origin_cwd)
+
 # direct: "pwn/VMEscape/BabyQemu"
 def Copy2IO(direct):
     global chall_path, io_path
@@ -106,7 +191,33 @@ def Copy2IO(direct):
     new_doc.write(UpdateREADME(direct))
     new_doc.close()
     UpdateMKDOCS(direct)
+    UpdateHomePage(direct)
 
+def Write2HomePage():
+    global io_path
+    global web_recent
+    global pwn_recent
+    global crypto_recent
+    global reverse_recent
+    global misc_recent
+    TO_BE_UPDATED = index_module.format(web_recent = web_recent, 
+                                        pwn_recent = pwn_recent, 
+                                        crypto_recent = crypto_recent, 
+                                        reverse_recent = reverse_recent , 
+                                        misc_recent = misc_recent)
+    index_bak_path = os.path.join(io_path, "docs/index.md.bak")
+    index_new_path = os.path.join(io_path, "docs/index.md")
+    if not os.path.exists(index_bak_path):
+        raise Exception("index.md.bak not found for {index_bak_path}".format(index_bak_path = index_bak_path))
+    index_bak = open(index_bak_path, "r")
+    index_bak_content = index_bak.read()
+    index_bak.close()
+    index_bak_content = index_bak_content.format(TO_BE_UPDATED = TO_BE_UPDATED)
+    print index_bak_content
+    index_new = open(index_new_path, "w")
+    index_new.write(index_bak_content)
+    index_new.close()
+    
 def Usage():
     print '''
     python2 update_io.py path_to_challenges path_to_f61d.github.io
@@ -138,3 +249,4 @@ if __name__ == "__main__":
                     direct = direct[:-1]
                 Copy2IO(direct)
                 print " ------"
+    Write2HomePage()
