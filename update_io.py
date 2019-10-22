@@ -40,16 +40,11 @@ def UpdateREADME(direct):
     content_new = content_old.replace("![](./", "![]({full_path}/".format(full_path = RelPathPre2FullPathPre(direct)))
     return content_new 
 
-def yml_add_new_item(origin, pathes, direct):
-    if len(pathes) == 1 and type(origin) == str:
-        return "{file_name}.md".format(file_name = direct)
-        
-    if len(pathes) == 1 and type(origin) == dict:
-        new_node = {}
-        new_node[pathes[0]] = "{file_name}.md".format(file_name = direct)
-        return new_node
-        
+def yml_add_new_item(origin, pathes, direct):     
     if type(origin) == dict:
+        if len(pathes) == 1 and pathes[0] in origin.keys(): #update {"CHALL":"/type0/type1/CHALL.md"}
+            origin[pathes[0]] = "{file_name}.md".format(file_name = direct)
+            return origin
         if pathes[0] in origin.keys():
             origin[pathes[0]] = yml_add_new_item(origin[pathes[0]], pathes[1:], direct)
             return origin
@@ -73,7 +68,7 @@ def yml_add_new_item(origin, pathes, direct):
         elif len(pathes) == 1:
             new_node = {}
             new_node[pathes[0]] = ""
-            new_node[pathes[0]] = yml_add_new_item(new_node[pathes[0]], pathes, direct)
+            new_node[pathes[0]] = "{file_name}.md".format(file_name = direct)
             origin.append(new_node)
             return origin
 
