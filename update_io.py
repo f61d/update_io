@@ -132,19 +132,24 @@ def UpdateHomePage(direct):
     #goto chall_path work dir
     os.chdir(chall_path)
     README_PATH = os.path.join("./", direct)
-    result = os.popen('git log --date=short {readme_path}'.format(readme_path = README_PATH)) 
+    README_PATH = os.path.join(README_PATH, "README.md")
+    result = os.popen('git log --date=short \"{readme_path}\"'.format(readme_path = README_PATH))
+    #print 'git log --date=short {readme_path}'.format(readme_path = README_PATH)
     res = result.read()
     result.close()
     AUTHOR = ""
     DATE = ""
+    #print res
     for line in res.splitlines(): 
-        if "Author:".lower() in line.lower():
+        if "Author:".lower() in line.lower() and AUTHOR == "":
+            #print line
             AUTHOR = line[line.find(":") + 1 : ].strip()
             AUTHOR_mail_beg = AUTHOR.find("<")
             AUTHOR_mail_end = AUTHOR.find(">")
             AUTHOR = AUTHOR[ : AUTHOR_mail_beg] + AUTHOR[AUTHOR_mail_end + 1 : ]
             AUTHOR = AUTHOR.strip()
-        if "Date:".lower() in line.lower():
+            #print AUTHOR
+        if "Date:".lower() in line.lower() and DATE == "":
             DATE = line[line.find(":") + 1 : ].strip()
             timeArray = DATE.split("-")
             day_commit = datetime.datetime(int(timeArray[0]), int(timeArray[1]), int(timeArray[2]))
