@@ -30,8 +30,8 @@ def UpdateREADME(direct):
     global chall_path, io_path
     if direct.endswith("/"):
         direct = direct[: -1]    
-    README_PATH = os.path.join(chall_path, direct)
-    README_PATH = os.path.join(README_PATH, "README.md")
+    README_PATH = os.path.join(chall_path, direct).replace("\\","/")
+    README_PATH = os.path.join(README_PATH, "README.md").replace("\\", "/")
     if not os.path.exists(README_PATH):
         raise Exception("README.md for {README_PATH} not found".format(README_PATH = README_PATH))
     rdme = open(README_PATH, "r")
@@ -73,7 +73,7 @@ def yml_add_new_item(origin, pathes, direct):
             return origin
 
 def UpdateMKDOCS(direct):
-    mkdocs_file = open(os.path.join(io_path, "mkdocs.yml"), "r")
+    mkdocs_file = open(os.path.join(io_path, "mkdocs.yml").replace("\\","/"), "r")
     mkdocs_content_old = mkdocs_file.read()
     mkdocs_file.close()
     mkdocs_content_old_before = mkdocs_content_old[ : mkdocs_content_old.find("nav:")]
@@ -84,8 +84,8 @@ def UpdateMKDOCS(direct):
     key_name = mkdocs_content_old_yml.keys()[0]
     mkdocs_content_old_yml[key_name] = yml_add_new_item(path_init, direct.split("/"), direct)
     mkdocs_content_new = mkdocs_content_old_before + dump(mkdocs_content_old_yml)
-    print dump(mkdocs_content_old_yml)
-    mkdocs_file = open(os.path.join(io_path, "mkdocs.yml"), "w")
+    #print dump(mkdocs_content_old_yml)
+    mkdocs_file = open(os.path.join(io_path, "mkdocs.yml").replace("\\","/"), "w")
     mkdocs_file.write(mkdocs_content_new)
     mkdocs_file.close()
 
@@ -131,8 +131,8 @@ def UpdateHomePage(direct):
     origin_cwd = os.getcwd()
     #goto chall_path work dir
     os.chdir(chall_path)
-    README_PATH = os.path.join("./", direct)
-    README_PATH = os.path.join(README_PATH, "README.md")
+    README_PATH = os.path.join("./", direct).replace("\\", "/")
+    README_PATH = os.path.join(README_PATH, "README.md").replace("\\","/")
     result = os.popen('git log --date=short \"{readme_path}\"'.format(readme_path = README_PATH))
     #print 'git log --date=short {readme_path}'.format(readme_path = README_PATH)
     res = result.read()
@@ -177,15 +177,15 @@ def Copy2IO(direct):
     global chall_path, io_path
     if direct.endswith("/"):
         direct = direct[: -1]
-    docs_path = os.path.join(io_path, "docs")
+    docs_path = os.path.join(io_path, "docs").replace("\\","/")
     if not os.path.exists(os.path.join(docs_path, os.path.dirname(direct))):
-        os.makedirs(os.path.join(docs_path, os.path.dirname(direct)))
-    README_PATH = os.path.join(chall_path, direct)
-    README_PATH = os.path.join(README_PATH, "README.md")
+        os.makedirs(os.path.join(docs_path, os.path.dirname(direct)).replace("\\","/"))
+    README_PATH = os.path.join(chall_path, direct).replace("\\","/")
+    README_PATH = os.path.join(README_PATH, "README.md").replace("\\","/")
     if not os.path.exists(README_PATH):
         raise Exception("README.md for {README_PATH} not found".format(README_PATH = README_PATH))
-    doc_file_name = os.path.join(docs_path, os.path.dirname(direct))
-    doc_file_name = os.path.join(doc_file_name, direct.split("/")[-1])
+    doc_file_name = os.path.join(docs_path, os.path.dirname(direct)).replace("\\","/")
+    doc_file_name = os.path.join(doc_file_name, direct.split("/")[-1]).replace("\\","/")
     print doc_file_name + ".md"
     new_doc = open(doc_file_name + ".md", "w")
     new_doc.write(UpdateREADME(direct))
@@ -205,8 +205,8 @@ def Write2HomePage():
                                         crypto_recent = crypto_recent, 
                                         reverse_recent = reverse_recent , 
                                         misc_recent = misc_recent)
-    index_bak_path = os.path.join(io_path, "docs/index.md.bak")
-    index_new_path = os.path.join(io_path, "docs/index.md")
+    index_bak_path = os.path.join(io_path, "docs/index.md.bak").replace("\\","/")
+    index_new_path = os.path.join(io_path, "docs/index.md").replace("\\","/")
     if not os.path.exists(index_bak_path):
         raise Exception("index.md.bak not found for {index_bak_path}".format(index_bak_path = index_bak_path))
     index_bak = open(index_bak_path, "r")
@@ -239,6 +239,7 @@ if __name__ == "__main__":
             if root == chall_path:
                 continue
             if file == "README.md":
+                print root,file
                 direct = root.replace("\\", "/")
                 direct = direct.replace(chall_path, "")
                 while direct.startswith("./"):
